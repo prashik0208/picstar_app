@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Reel</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        #progressBar {
+            width: 100%;
+            background: #ccc;
+            height: 10px;
+            margin-top: 10px;
+        }
+
+        #progress {
+            height: 10px;
+            width: 0%;
+            background: green;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Upload a Reel</h2>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" name="video" accept="video/*" required><br><br>
+        <input type="text" name="title" placeholder="Enter Title" required><br><br>
+        <textarea name="description" placeholder="Enter Description" rows="4" required></textarea><br><br>
+        <button type="submit">Upload</button>
+        <div id="progressBar">
+            <div id="progress"></div>
+        </div>
+        <p id="status"></p>
+    </form>
+
+    <script>
+        $(document).ready(function () {
+            $("#uploadForm").on("submit", function (e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+                $.ajax({
+                    url: "reels.php",
+                    type: "POST",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    xhr: function () {
+                        var xhr = new window.XMLHttpRequest();
+                        xhr.upload.addEventListener("progress", function (evt) {
+                            if (evt.lengthComputable) {
+                                var percentComplete = (evt.loaded / evt.total) * 100;
+                                $("#progress").css("width", percentComplete + "%");
+                                $("#status").text("Uploading... " + Math.round(percentComplete) + "%");
+                            }
+                        }, false);
+                        return xhr;
+                    },
+                    success: function (response) {
+                        var result = JSON.parse(response);
+                        if (result.status === "success") {
+                            $("#status").text(result.message);
+                            window.location.href = "reels.html";
+                        } else {
+                            $("#status").text(result.message);
+                        }
+                    },
+                    error: function () {
+                        $("#status").text("❌ अपलोड फेल!");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
+

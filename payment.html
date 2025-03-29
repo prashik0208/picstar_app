@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PicStar Pay</title>
+</head>
+<body>
+    <h2>UPI Payment</h2>
+    <input type="text" id="upi_id" placeholder="Enter UPI ID">
+    <input type="number" id="amount" placeholder="Enter Amount">
+    <button onclick="generateQR()">Generate QR Code</button>
+    <br>
+    <img id="qrImage" width="200" height="200" style="display:none;">
+
+    <script>
+        function generateQR() {
+            var upi = document.getElementById("upi_id").value;
+            var amount = document.getElementById("amount").value;
+
+            fetch(`http://localhost/picstarpay/backend/api.php?action=generate_qr&upi_id=${upi}&amount=${amount}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("qrImage").src = data.qrURL;
+                document.getElementById("qrImage").style.display = "block";
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reels Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #000;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        #video-container {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        video {
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+        }
+        #controls {
+            position: absolute;
+            bottom: 70px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 28px;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+        #subscribe-btn {
+            background-color: orange;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 16px;
+        }
+        #stats {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-size: 16px;
+        }
+        #comment-section {
+            position: absolute;
+            bottom: 50px;
+            left: 20px;
+            width: 70%;
+            max-height: 200px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 10px;
+            display: none;
+        }
+        #comments {
+            list-style-type: none;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        #comments li {
+            margin: 5px 0;
+            padding: 5px;
+            border-bottom: 1px solid #ddd;
+        }
+        input, #comment-btn {
+            padding: 8px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="video-container">
+    <video id="reel" autoplay loop muted playsinline>
+        <source src="video1.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Views, Likes, Dislikes, etc. -->
+    <div id="stats">
+        👁️ <span id="views">0</span> Views<br>
+        👍🏻 <span id="likes">0</span> Likes<br>
+        👎🏻 <span id="dislikes">0</span> Dislikes<br>
+        📠 <span id="commentCount">0</span> Comments<br>
+        📩 <span id="shares">0</span> Shares<br>
+        🔔 <span id="subscribers">0</span> Subscribers
+    </div>
+
+    <!-- Controls -->
+    <div id="controls">
+        <button onclick="likeVideo()">👍🏻</button>
+        <button onclick="dislikeVideo()">👎🏻</button>
+        <button onclick="subscribe()" id="subscribe-btn">🔔 Subscribe</button>
+        <button onclick="shareVideo()">📩</button>
+        <button onclick="showComments()">📠</button>
+    </div>
+
+    <!-- Comment Section -->
+    <div id="comment-section">
+        <h4>Comments</h4>
+        <ul id="comments"></ul>
+        <input type="text" id="commentInput" placeholder="Add a comment..." />
+        <button id="comment-btn" onclick="addComment()">📠 Comment</button>
+    </div>
+</div>
+
+<script>
+    let videos = ["video1.mp4", "video2.mp4", "video3.mp4"];
+    let currentVideoIndex = 0;
+
+    let views = 0, likes = 0, dislikes = 0, shares = 0, subscribers = 0, comments = 0;
+
+    const reel = document.getElementById("reel");
+
+    // Load next video on swipe
+    document.body.addEventListener('wheel', function(event) {
+        if (event.deltaY > 0) {
+            loadNextVideo();
+        }
+    });
+
+    // Views increment on play
+    function incrementViews() {
+        views++;
+        document.getElementById("views").innerText = views;
+    }
+    reel.addEventListener('play', incrementViews);
+
+    // Load next video
+    function loadNextVideo() {
+        currentVideoIndex++;
+        if (currentVideoIndex >= videos.length) {
+            currentVideoIndex = 0;
+        }
+        reel.src = videos[currentVideoIndex];
+        reel.play();
+    }
+
+    // Like function
+    function likeVideo() {
+        likes++;
+        document.getElementById("likes").innerText = likes;
+    }
+
+    // Dislike function
+    function dislikeVideo() {
+        dislikes++;
+        document.getElementById("dislikes").innerText = dislikes;
+    }
+
+    // Subscribe function
+    function subscribe() {
+        if (subscribers === 0) {
+            subscribers++;
+            document.getElementById("subscribers").innerText = subscribers;
+            document.getElementById("subscribe-btn").innerText = "✔️ Subscribed";
+            alert("Thanks for subscribing!");
+        } else {
+            alert("Already subscribed!");
+        }
+    }
+
+    // Share function
+    function shareVideo() {
+        shares++;
+        document.getElementById("shares").innerText = shares;
+        alert("Video Shared!");
+    }
+
+    // Show/hide comments
+    function showComments() {
+        const commentSection = document.getElementById("comment-section");
+        commentSection.style.display = (commentSection.style.display === "none") ? "block" : "none";
+    }
+
+    // Add comment
+    function addComment() {
+        const commentInput = document.getElementById("commentInput");
+        const commentText = commentInput.value.trim();
+        if (commentText !== "") {
+            const commentsList = document.getElementById("comments");
+            const newComment = document.createElement("li");
+            newComment.textContent = commentText;
+            commentsList.appendChild(newComment);
+
+            comments++;
+            document.getElementById("commentCount").innerText = comments;
+
+            commentInput.value = "";
+        }
+    }
+</script>
+
+</body>
+</html>
+
